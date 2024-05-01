@@ -10,25 +10,31 @@ namespace sb {
     template<C_FA FA>
     using SetFA = std::set<
         T_FAPtrSt<FA>,
-        CompIter<T_FAPtrSt<FA>>
+        CompIter
     >;
 
-    template<C_FA FA>
+    template<C_cFA FA>
     using SetCFA = std::set<
         T_FAPtrCSt<FA>,
-        CompIter<T_FAPtrCSt<FA>>
+        CompIter
     >;
 
-    template<C_FA InFA, C_FA OutFA>
-    using Set2StFA = std::map<
-        SetCFA<InFA>,
+    template<C_cFA FA>
+    using SetPtrCFA = std::set<
+        const T_FASt<FA>*
+    >;
+
+
+    template<C_cFA InFA, C_FA OutFA>
+    using SetPtrC2StFA = std::map<
+        SetPtrCFA<InFA>,
         T_FAPtrSt<OutFA>
     >;
 
-    template<C_FA FA>
-    using Le2SetCFA = std::map<
+    template<C_cFA FA>
+    using Le2SetPtrCFA = std::map<
         T_FALe<FA>,
-        SetCFA<FA>
+        SetPtrCFA<FA>
     >;
 
     

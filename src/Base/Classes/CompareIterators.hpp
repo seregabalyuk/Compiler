@@ -3,8 +3,8 @@
 #include "../Requirements/Iterator.hpp"
 
 namespace sb {
-    template<class Iter>
     struct CompareIterators {
+        template<class Iter>
         bool operator()(
             const Iter& left,
             const Iter& right
@@ -12,6 +12,5 @@ namespace sb {
             return &*left < &*right;
         }
     };
-    template<class Iter>
-    using CompIter = CompareIterators<Iter>;
+    using CompIter = CompareIterators;
 } // namespace sb

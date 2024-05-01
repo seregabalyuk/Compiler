@@ -13,9 +13,21 @@ int main() {
     NFA nfa;
     nfa.emplace();
     nfa.begin()->emplace('a', nfa.begin());
-    sb::removeEpsNFA(nfa);
-    sb::removeUselessNFA(nfa);
-    //auto dfa = sb::determineNFA<DFA>(nfa);
+    nfa.begin()->emplace('a', nfa.begin());
+    nfa.begin()->emplace('a', nfa.begin());
+
+    nfa.begin()->type() = true;
     
+
     sb::printFA(std::cout, nfa);
+
+    sb::removeEpsNFA(nfa);
+    
+    sb::removeUselessNFA(nfa);
+
+    sb::printFA(std::cout, nfa);
+    
+    auto dfa = sb::determineNFA<DFA>(nfa);
+    
+    sb::printFA(std::cout, dfa);
 }

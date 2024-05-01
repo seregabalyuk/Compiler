@@ -12,7 +12,7 @@ namespace sb {
         std::map<
             T_FAPtrCSt<FA>, 
             size_t,
-            CompIter<T_FAPtrCSt<FA>>
+            CompIter
         > ptr2num;
         size_t count = 0;
         for (auto iter = fa.begin(); iter != fa.end(); ++ iter) {

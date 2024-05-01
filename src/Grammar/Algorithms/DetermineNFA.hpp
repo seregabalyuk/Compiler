@@ -3,16 +3,15 @@
 #include "HelperFA.hpp"
 
 namespace sb {
-
-    template<C_FA OutFA, C_FA InFA>
+    template<C_FA OutFA, C_cFA InFA>
     OutFA determineNFA(const InFA& inFA);
 
 /// Realization
 
-    template<C_FA OutFA, C_FA InFA>
+    template<C_FA OutFA, C_cFA InFA>
     T_FAPtrSt<OutFA> detDFS(
-        SetCFA<InFA>&& state,
-        Set2StFA<InFA, OutFA>& visits,
+        SetPtrCFA<InFA>&& state,
+        SetPtrC2StFA<InFA, OutFA>& visits,
         OutFA& outFA
         ) {
         using Type = T_FATy<OutFA>;
@@ -22,7 +21,7 @@ namespace sb {
             return visits.at(state);
         }
         
-        Le2SetCFA<InFA> nextStates;
+        Le2SetPtrCFA<InFA> nextStates;
         
         Type type = Type();
         
@@ -32,11 +31,11 @@ namespace sb {
                 if (!nextStates.count(trans.first)) {
                     nextStates.emplace(
                         trans.first,
-                        SetCFA<InFA>()
+                        SetPtrCFA<InFA>()
                     );
                 }
                 nextStates.at(trans.first).emplace(
-                    trans.second
+                    &*T_FAPtrCSt<InFA>(trans.second)
                 );
             }
         }
@@ -56,14 +55,14 @@ namespace sb {
         return stateOutFA;
     }
 
-    template<C_FA OutFA, C_FA InFA>
+    template<C_FA OutFA, C_cFA InFA>
     OutFA determineNFA(const InFA& inFA) {
         OutFA outFA;
 
-        Set2StFA<InFA, OutFA> visits;
-        SetCFA<InFA> startState;
+        SetPtrC2StFA<InFA, OutFA> visits;
+        SetPtrCFA<InFA> startState;
 
-        startState.emplace(inFA.begin());
+        startState.emplace(&*inFA.begin());
         detDFS<OutFA, InFA>(
             std::move(startState),
             visits,
