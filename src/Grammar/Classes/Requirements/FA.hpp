@@ -22,6 +22,7 @@ namespace sb {
         {state.trans()} -> C_Iterable;
         {*state.trans().begin()} -> std::same_as<const T_FATr<FA>&>;
         state.type();
+        {state.count(letter)} -> std::convertible_to<size_t>;
 
         {*ptr} -> std::same_as<const T_FASt<FA>&>;
         

@@ -114,9 +114,14 @@ sb::T_FAPtrCSt<FA> // PtrConstState
     ```c++
     state.trans(); // Container with trans
     state.type();  // return Type&
+    state.count(letter); // return size_t
+
+    state.emplace(letter, ptr_state); 
+    state.erase(letter);
     
     c_state.trans(); // const Container with trans
     c_state.type(); // return const Type&
+    c_state.count(letter); // return size_t
     
     for (auto& trans: state.trans()) {
         // your code

@@ -89,6 +89,10 @@ namespace sb {
                 _trans.erase(letter);
             }
 
+            size_t count(Letter letter) const {
+                return _trans.count(letter);
+            }
+
             auto get(Letter letter) {
                 return get(letter, std::bool_constant<IsNFA>());
             }

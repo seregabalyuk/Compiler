@@ -3,9 +3,8 @@
 
 #include <Grammar/Classes/FA/FA.hpp>
 #include <Grammar/Debug/PrintFA.hpp>
-#include <Grammar/Algorithms/RemoveEpsNFA.hpp>
-#include <Grammar/Algorithms/RemoveUselessNFA.hpp>
-#include <Grammar/Algorithms/DetermineNFA.hpp>
+#include <Grammar/Algorithms/NFA2DFA.hpp>
+
 
 int main() {
     using DFA = sb::FA<0>;
@@ -21,13 +20,7 @@ int main() {
 
     sb::printFA(std::cout, nfa);
 
-    sb::removeEpsNFA(nfa);
-    
-    sb::removeUselessNFA(nfa);
+    auto dfa = nfa2dfa<DFA>(nfa);
 
-    sb::printFA(std::cout, nfa);
-    
-    auto dfa = sb::determineNFA<DFA>(nfa);
-    
     sb::printFA(std::cout, dfa);
 }
