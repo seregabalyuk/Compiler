@@ -40,7 +40,7 @@ namespace sb {
             }
         }
 
-        auto stateOutFA = outFA.emplace(type);
+        auto stateOutFA = outFA.emplace_back(type);
         visits.emplace(std::move(state), stateOutFA);
 
         for (auto& [letter, nextState]: nextStates) {

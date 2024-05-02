@@ -143,18 +143,38 @@ namespace sb {
         auto end() const   { return _states.end(); }
         auto cbegin() const { return _states.cbegin(); }
         auto cend() const   { return _states.cend(); }
+
+        auto rbegin() { return _states.rbegin(); }
+        auto rend()   { return _states.rend(); }
+        auto rbegin() const { return _states.rbegin(); }
+        auto rend() const   { return _states.rend(); }
+        auto rcbegin() const { return _states.rcbegin(); }
+        auto rcend() const   { return _states.rcend(); }
        // change
         template<class... Args>
-        auto emplace(Args&&... args) { 
-            return _states.emplace(
-                end(),
+        auto emplace_back(Args&&... args) { 
+            _states.emplace_back(
                 _states.get_allocator(),
                 std::forward<Args>(args) ...
             );
+            return -- _states.end();
+        }
+
+        template<class... Args>
+        auto emplace_front(Args&&... args) { 
+            _states.emplace_front(
+                _states.get_allocator(),
+                std::forward<Args>(args) ...
+            );
+            return _states.begin();
         }
 
         auto erase(iterator state) {
             return _states.erase(state);
+        }
+
+        auto splice(FA& other) { // other become empty
+            return _states.splice(_states.end(), other._states);
         }
        // info
         size_t size() const { return _states.size(); }

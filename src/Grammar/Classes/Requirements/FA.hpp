@@ -57,7 +57,8 @@ namespace sb {
 
         {*ptr} -> std::same_as<T_FASt<FA>&>;
 
-        {fa.emplace()} -> std::same_as<T_FAPtrSt<FA>>;
+        {fa.emplace_back()} -> std::same_as<T_FAPtrSt<FA>>;
+        {fa.emplace_front()} -> std::same_as<T_FAPtrSt<FA>>;
         fa.erase(ptr);
     };
   // DFA

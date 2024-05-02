@@ -4,13 +4,15 @@
 #include <Grammar/Classes/FA/FA.hpp>
 #include <Grammar/Debug/PrintFA.hpp>
 #include <Grammar/Algorithms/NFA2DFA.hpp>
+#include <Grammar/Algorithms/FunctionsNFA.hpp>
 
 
 int main() {
     using DFA = sb::FA<0>;
     using NFA = sb::FA<1>;
     NFA nfa;
-    nfa.emplace();
+    NFA nfa2;
+    nfa.emplace_back();
     nfa.begin()->emplace('a', nfa.begin());
     nfa.begin()->emplace('a', nfa.begin());
     nfa.begin()->emplace('a', nfa.begin());
@@ -22,5 +24,5 @@ int main() {
 
     auto dfa = nfa2dfa<DFA>(nfa);
 
-    sb::printFA(std::cout, dfa);
+    sb::printFA(std::cout, dfa);    
 }

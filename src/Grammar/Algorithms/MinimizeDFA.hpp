@@ -100,7 +100,7 @@ namespace sb {
             classes.erase(iter);
             // add state in out
             for (auto& _class: classes) {
-                auto stateOut = ret.emplace();
+                auto stateOut = ret.emplace_back();
                 for (auto stateIn: _class) {
                     translator[stateIn] = stateOut;
                 }

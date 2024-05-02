@@ -56,7 +56,7 @@ namespace sb {
             }
         }
         if (fa.size() == 0) {
-            fa.emplace();
+            fa.emplace_back();
         }
     }    
 } // namespace sb
