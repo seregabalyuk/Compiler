@@ -7,6 +7,7 @@
 
 namespace sb {
     template<C_DFA DFA, C_FA NFA>
+    requires C_AssociateFA<DFA, NFA>
     DFA nfa2dfa(NFA& nfa,
         T_FALe<NFA> eps = T_FALe<NFA>(), 
         T_FATy<NFA> useless = T_FATy<NFA>()) 

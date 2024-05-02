@@ -18,7 +18,8 @@ namespace sb {
         return ret;
     }
 
-    template<C_DFA OutFA, C_cDFA InFA>
+    template<C_DFA OutFA, C_cDFA InFA> 
+    requires C_AssociateFA<OutFA, InFA>
     OutFA minimizeDFA(const InFA& fa) {
         using Class = SetCFA<InFA>;
         

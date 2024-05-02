@@ -107,6 +107,21 @@ namespace sb {
         {*state.get(letter).begin()} -> std::same_as<T_FATr<NFA>&>;
         {*state.get(letter).end()} -> std::same_as<T_FATr<NFA>&>;
     };
+  // AssociateFA
+    template<class L, class R>
+    concept C_AssociateFA =
+        C_cFA<L> &&
+        C_cFA<R> &&
+        std::same_as<T_FALe<L>, T_FALe<R>> &&
+        std::convertible_to<
+            T_FATy<L>,
+            T_FATy<R>
+        > &&
+        std::convertible_to<
+            T_FATy<R>,
+            T_FATy<L>
+        >
+    ;
   // Checkers
     template<C_cFA FA>
     void checkcFA(const FA& fa) {}

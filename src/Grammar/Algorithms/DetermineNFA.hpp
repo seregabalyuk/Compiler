@@ -9,6 +9,7 @@ namespace sb {
 /// Realization
 
     template<C_FA OutFA, C_cFA InFA>
+    requires C_AssociateFA<OutFA, InFA>
     T_FAPtrSt<OutFA> detDFS(
         SetPtrCFA<InFA>&& state,
         SetPtrC2StFA<InFA, OutFA>& visits,
