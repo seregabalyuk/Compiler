@@ -3,8 +3,8 @@
 #include <list>
 #include <string>
 
-#include <../Requirements/FA.hpp>
-#include <../Requirements/RPN.hpp>
+#include "../Requirements/FA.hpp"
+#include "../Requirements/RPN.hpp"
 
 namespace sb {
     template<
@@ -15,7 +15,7 @@ namespace sb {
         > Creator,
         C_TableRPN<
             T_FALe<DFA>,
-            CreatorRPNTraitsT<Creator>
+            T_CreatorRPNT<Creator>
         > Table,
         class Allocator = std::allocator<void>
     > class RPN {
@@ -26,13 +26,13 @@ namespace sb {
         using _TypeDFA = T_FATy<DFA>;
 
        // from Creator
-        using _T = CreatorRPNTraitsT<Creator>;
+        using _T = T_CreatorRPNT<Creator>;
 
        // from Table
-        using _Rule = const TableRPNTraitsR<Table, _Letter>;
-        using _Priority = TableRPNTraitsP<Table, _Letter>;
-        using _TypeTable = TableRPNTraitsT<Table, _Letter>;
-        using _LRule = Link<_Rule>;
+        using _Rule = const T_TableRPNR<Table, _Letter>;
+        using _Priority = T_TableRPNP<Table, _Letter>;
+        using _TypeTable = T_TableRPNT<Table, _Letter>;
+        using _PtrRule = _Rule*;
 
        // from Allocator
         template<class U>
@@ -44,33 +44,33 @@ namespace sb {
 
        // other
         using _StackT = std::list<_T, _Alloc<_T>>;
-        using _StackR = std::list<_LRule, _Alloc<_LRule>>;
+        using _StackR = std::list<_PtrRule, _Alloc<_PtrRule>>;
       // function
         void _removeOneRuleFromStack() {
             _executeRule(_stackR.back());
-            if (_stackR.back()().type() == RuleRPNType::Binary) {
+            if (_stackR.back()->type() == RuleRPNType::Binary) {
                 -- _counterTbyR;
             }
              _stackR.pop_back();
         }
-        void _removeRulesFromStack(_LRule rule) {
+        void _removeRulesFromStack(_PtrRule rule) {
             while (
                 _stackR.size() &&
-                !_stackR.back().empty() &&
-                _stackR.back()().priority() >= rule().priority()) 
+                _stackR.back() &&
+                _stackR.back()->priority() >= rule->priority()) 
             {
                 _removeOneRuleFromStack();
             }
         }
-        void _addRuleToStack(_LRule rule) {
+        void _addRuleToStack(_PtrRule rule) {
             _stackR.emplace_back(rule);
-            if (rule().type() == RuleRPNType::Binary) {
+            if (rule->type() == RuleRPNType::Binary) {
                 ++ _counterTbyR;
             }
         }
         void _addEpsRuleToStack() {
-            _LRule rule = _table->get(_Letter());
-            if (rule().type() == RuleRPNType::Binary) {
+            _PtrRule rule = &_table->get(_Letter());
+            if (rule->type() == RuleRPNType::Binary) {
                 _removeRulesFromStack(rule);
                 _addRuleToStack(rule);
             } else {
@@ -82,30 +82,33 @@ namespace sb {
                 _addEpsRuleToStack();
             }
         }
-        void _executeRule(_LRule rule) {
-            switch(rule().type()) {
+        void _executeRule(_PtrRule rule) {
+            switch(rule->type()) {
             case RuleRPNType::Binary:
                 if (_stackT.size() < 2) {
-                    throw std::string{"StackT is little for binary rule "} + rule().letter();
+                    throw std::string{"StackT is little for binary rule "}
+                        + rule->letter();
                 }
                 {
                     auto& first = *(++_stackT.rbegin());
                     auto& second = _stackT.back();
-                    rule()(first, std::move(second));
+                    (*rule)(first, std::move(second));
                     _stackT.pop_back();
                 }
                 break;
             case RuleRPNType::PrefixUnary:
                 if (!_stackT.size()) {
-                    throw std::string{"StackT is little for prifix rule "} + rule().letter();
+                    throw std::string{"StackT is little for prifix rule "}
+                        + rule->letter();
                 }
-                rule()(_stackT.back());
+                (*rule)(_stackT.back());
                 break;
             case RuleRPNType::SuffixUnary:
                 if (!_stackT.size()) {
-                    throw std::string{"StackT is little for suffix rule "} + rule().letter();
+                    throw std::string{"StackT is little for suffix rule "} 
+                        + rule->letter();
                 }
-                rule()(_stackT.back());
+                (*rule)(_stackT.back());
                 break;
             default:
                 throw  std::string{"This rule unknow type in rpn"}; 
@@ -124,13 +127,17 @@ namespace sb {
             std::cout << letter << ' ' << type << '\n';
             std::cout << _stackT.size() << ' ' << _stackR.size() << '\n';
             for (auto& rule: _stackR) {
-                if (rule.empty()) {
+                if (!rule) {
                     std::cout << '(';
-                } else if (rule().letter() == _Letter()) {
+                } else if (rule->letter() == _Letter()) {
                     std::cout << 'e';
                 } else {
-                    std::cout << rule().letter();
+                    std::cout << rule->letter();
                 }
+            }
+            std::cout << '\n';
+            for (auto& t:_stackT) {
+                printFA(std::cout, t) << '\n';
             }
             std::cout << '\n';
         }
@@ -207,8 +214,8 @@ namespace sb {
 			_state = _state->get(letter);
             const auto& type = _state->type();
 			if (type == _typeTable) { // is operation
-				_LRule rule = _table->get(letter);
-                switch (rule().type()) {
+				_PtrRule rule = &_table->get(letter);
+                switch (rule->type()) {
                 case RuleRPNType::PrefixUnary:
                     _stackR.emplace_back(rule);
                     break;
@@ -225,9 +232,9 @@ namespace sb {
                 }
             } else if (type == _typeOpen) { // is open bracket
                 _tryAddEpsRuleToStack();
-                _stackR.emplace_back();
+                _stackR.emplace_back(nullptr);
             } else if (type == _typeClose) { // is close bracket
-                while(_stackR.size() && !_stackR.back().empty()) {
+                while(_stackR.size() && _stackR.back()) {
                     _removeOneRuleFromStack();
                 }
                 if (_stackR.empty()) {
@@ -252,7 +259,7 @@ namespace sb {
 
         _T get() try {
             while (_stackR.size()) {
-                if (_stackR.back().empty()) {
+                if (!_stackR.back()) {
                     throw std::string{"Missing close bracket"};
                 }
                 _executeRule(_stackR.back());

@@ -20,9 +20,14 @@ namespace sb {
         }
         count = 0;
         for (auto& state: fa) {
-            out << count << "," << state.type() << ":";
+            out << "├─" << count ++ << "," << (int)state.type() << ":";
             for (auto& [letter, next]: state.trans()) {
-                out << letter << ">" << ptr2num[next] << ", ";
+                if (letter == T_FALe<FA>()) {
+                    out << "\\e";
+                } else {
+                    out << letter;
+                }
+                out << ">" << ptr2num[next] << ", ";
             }
             out << "\n";
         }

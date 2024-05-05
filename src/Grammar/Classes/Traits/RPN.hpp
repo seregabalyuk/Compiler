@@ -134,7 +134,7 @@ namespace sb {
 	template<class Creator>
     class T_CreatorRPN {
 		using _Traits = lT_CreatorRPN<
-			Creator
+			Creator,
 			lC_T_CreatorRPN<Creator>
 		>;
 	public:

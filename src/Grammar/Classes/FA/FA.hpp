@@ -136,6 +136,14 @@ namespace sb {
         using State          = _State;
         using Transition     = _States::value_type;
       // metods
+       // constructors
+        FA() = default;
+        FA(const Allocator& alloc): _states(alloc) {}
+        FA(FA&& fa): _states(std::move(fa._states)) {}
+        FA& operator=(FA&& fa) {
+            _states.swap(fa._states);
+            return *this;
+        }
        // iterators
         auto begin() { return _states.begin(); }
         auto end()   { return _states.end(); }
@@ -175,6 +183,10 @@ namespace sb {
 
         auto splice(FA& other) { // other become empty
             return _states.splice(_states.end(), other._states);
+        }
+
+        auto clear() {
+            return _states.clear();
         }
        // info
         size_t size() const { return _states.size(); }

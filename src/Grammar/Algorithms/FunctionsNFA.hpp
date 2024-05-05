@@ -7,7 +7,7 @@ namespace sb {
     void concatNFA(NFA& left,
                 NFA&& right) {
         auto eps = T_FALe<NFA>();
-        left.rbegin()->emplace(eps, right.begin());
+        (--left.end())->emplace(eps, right.begin());
         left.splice(right);
     } // OK
 
@@ -19,8 +19,8 @@ namespace sb {
         auto lstart = left.begin();
         auto rstart = right.begin();
 
-        auto lfinish = left.rbegin();
-        auto rfinish = right.rbegin();
+        auto lfinish = -- left.end();
+        auto rfinish = -- right.end();
 
         left.splice(right);
         left.emplace_front();
@@ -29,8 +29,8 @@ namespace sb {
         left.begin()->emplace(eps, lstart);
         left.begin()->emplace(eps, rstart);
         
-        lfinish->emplace(eps, left.rbegin().base());
-        rfinish->emplace(eps, left.rbegin().base());
+        lfinish->emplace(eps, --left.end());
+        rfinish->emplace(eps, --left.end());
     } // OK
 
     template<C_NFA NFA>
@@ -38,16 +38,16 @@ namespace sb {
         auto eps = T_FALe<NFA>();
 
         auto prevstart = nfa.begin();
-        auto prevfinish = nfa.rbegin();
+        auto prevfinish = -- nfa.end();
         
         nfa.emplace_front();
         nfa.emplace_back();
         
-        nfa.begin()->emplace(eps, nfa.rbegin().base());
-        nfa.rbegin()->emplace(eps, nfa.begin());
+        nfa.begin()->emplace(eps, --nfa.end());
+        (--nfa.end())->emplace(eps, nfa.begin());
         
         nfa.begin()->emplace(eps, prevstart);
-        prevfinish->emplace(eps, nfa.rbegin().base());
+        prevfinish->emplace(eps, --nfa.end());
     } // OK
 
     template<C_NFA NFA>
@@ -55,15 +55,15 @@ namespace sb {
         auto eps = T_FALe<NFA>();
         
         auto prevstart = nfa.begin();
-        auto prevfinish = nfa.rbegin();
+        auto prevfinish = --nfa.end();
         
         nfa.emplace_front();
         nfa.emplace_back();
         
-        nfa.rbegin()->emplace(eps, nfa.begin());
+        (--nfa.end())->emplace(eps, nfa.begin());
         
         nfa.begin()->emplace(eps, prevstart);
-        prevfinish->emplace(eps, nfa.rbegin().base());
+        prevfinish->emplace(eps, --nfa.end());
     } // OK
 
     template<C_NFA NFA>
@@ -71,21 +71,21 @@ namespace sb {
         auto eps = T_FALe<NFA>();
 
         auto prevstart = nfa.begin();
-        auto prevfinish = nfa.rbegin();
+        auto prevfinish = --nfa.end();
         
         nfa.emplace_front();
         nfa.emplace_back();
         
-        nfa.begin()->emplace(eps, nfa.rbegin().base());
+        nfa.begin()->emplace(eps, --nfa.end());
         
         nfa.begin()->emplace(eps, prevstart);
-        prevfinish->emplace(eps, nfa.rbegin().base());
+        prevfinish->emplace(eps, --nfa.end());
     } // OK
 
     template<C_NFA NFA>
     void setTypeNFA(
         NFA& left,
         NFA&& right) {
-        left.rbegin()->type() |= right.rbegin()->type();
+        (--left.end())->type() |= (--right.end())->type();
     }
 } // namespace sb

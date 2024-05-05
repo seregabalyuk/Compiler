@@ -3,7 +3,7 @@
 #include <concepts>
 
 #include "../Traits/RPN.hpp"
-#include "../RPN/RuleRPNType.hpp"
+#include "../RPN/RuleType.hpp"
 
 namespace sb {
 // Concepts
@@ -17,19 +17,19 @@ namespace sb {
     {
         creator.put(letter, type);
         {creator.empty()} -> std::same_as<bool>;
-        {creator.get()} -> std::same_as<CreatorRPNTraitsT<Creator>>;
+        {creator.get()} -> std::same_as<T_CreatorRPNT<Creator>>;
     };
   // TableRPN
     template<class Table, class Letter, class T>
     concept C_TableRPN = 
-        std::same_as<RuleRPNType, TableRPNTraitsT<Table, Letter>> &&
+        std::same_as<RuleRPNType, T_TableRPNT<Table, Letter>> &&
     requires(
         const Table table,
         const Letter letter,
-        const TableRPNTraitsR<Table, Letter> rule,
+        const T_TableRPNR<Table, Letter> rule,
         T value) 
     {
-        {table.get(letter)} -> std::same_as<const TableRPNTraitsR<Table, Letter>&>;
+        {table.get(letter)} -> std::same_as<const T_TableRPNR<Table, Letter>&>;
         rule.type();
         rule.priority();
         rule(value, std::move(value));
